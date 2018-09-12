@@ -5,7 +5,6 @@
 
       <div class="title-container">
         <h3 class="title">{{ $t('login.title') }}</h3>
-        <lang-select class="set-language"/>
       </div>
 
       <el-form-item prop="username">
@@ -48,28 +47,18 @@
         <span>{{ $t('login.password') }} : {{ $t('login.any') }}</span>
       </div>
 
-      <el-button class="thirdparty-button" type="primary" @click="showDialog=true">{{ $t('login.thirdparty') }}</el-button>
     </el-form>
-
-    <el-dialog :title="$t('login.thirdparty')" :visible.sync="showDialog" append-to-body>
-      {{ $t('login.thirdpartyTips') }}
-      <br>
-      <br>
-      <br>
-      <social-sign />
-    </el-dialog>
 
   </div>
 </template>
 
 <script>
 import { isvalidUsername } from '@/utils/validate'
-import LangSelect from '@/components/LangSelect'
 import SocialSign from './socialsignin'
 
 export default {
   name: 'Login',
-  components: { LangSelect, SocialSign },
+  components: { SocialSign },
   data() {
     const validateUsername = (rule, value, callback) => {
       if (!isvalidUsername(value)) {
@@ -79,16 +68,16 @@ export default {
       }
     }
     const validatePassword = (rule, value, callback) => {
-      if (value.length < 6) {
-        callback(new Error('The password can not be less than 6 digits'))
+      if (value.length < 4) {
+        callback(new Error('密码至少大于四位数字！'))
       } else {
         callback()
       }
     }
     return {
       loginForm: {
-        username: 'admin',
-        password: '1111111'
+        username: '',
+        password: ''
       },
       loginRules: {
         username: [{ required: true, trigger: 'blur', validator: validateUsername }],
@@ -111,6 +100,7 @@ export default {
   },
   created() {
     // window.addEventListener('hashchange', this.afterQRScan)
+    this.$store.dispatch('setLanguage', 'zh')
   },
   destroyed() {
     // window.removeEventListener('hashchange', this.afterQRScan)

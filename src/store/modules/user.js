@@ -1,19 +1,19 @@
 import { loginByUsername, logout, getUserInfo } from '@/api/login'
-import { getToken, setToken, removeToken } from '@/utils/auth'
+import { setToken, removeToken } from '@/utils/auth'
 
 const user = {
   state: {
-    user: '',
+    userName: '',
     status: '',
     code: '',
-    token: getToken(),
+    // token: getToken(),
     name: '',
     avatar: '',
-    introduction: '',
     roles: [],
     setting: {
       articlePlatform: []
-    }
+    },
+    login: false
   },
 
   mutations: {
@@ -22,9 +22,6 @@ const user = {
     },
     SET_TOKEN: (state, token) => {
       state.token = token
-    },
-    SET_INTRODUCTION: (state, introduction) => {
-      state.introduction = introduction
     },
     SET_SETTING: (state, setting) => {
       state.setting = setting
@@ -40,6 +37,12 @@ const user = {
     },
     SET_ROLES: (state, roles) => {
       state.roles = roles
+    },
+    SET_LOGIN: (state, loginState) => {
+      state.login = loginState
+    },
+    SET_USER: (state, name) => {
+      state.userName = name
     }
   },
 
@@ -49,9 +52,10 @@ const user = {
       const username = userInfo.username.trim()
       return new Promise((resolve, reject) => {
         loginByUsername(username, userInfo.password).then(response => {
-          const data = response.data
-          commit('SET_TOKEN', data.token)
-          setToken(response.data.token)
+          // const data = response.data
+          // commit('SET_TOKEN', data.token)
+          // setToken(response.data.token)
+          commit('SET_LOGIN', true)
           resolve()
         }).catch(error => {
           reject(error)
@@ -63,21 +67,21 @@ const user = {
     GetUserInfo({ commit, state }) {
       return new Promise((resolve, reject) => {
         getUserInfo(state.token).then(response => {
+          console.log('1.......')
           if (!response.data) { // 由于mockjs 不支持自定义状态码只能这样hack
             reject('error')
           }
+          console.log('2......')
           const data = response.data
-
-          if (data.roles && data.roles.length > 0) { // 验证返回的roles是否是一个非空数组
-            commit('SET_ROLES', data.roles)
-          } else {
-            reject('getInfo: roles must be a non-null array !')
+          console.log('data')
+          console.log(data)
+          if (data.success) {
+            commit('SET_NAME', data.data.nickName)
+            commit('SET_AVATAR', data.data.avatar || '')
+            commit('SET_USER', data.data.userName)
+            commit('SET_LOGIN', true)
           }
-
-          commit('SET_NAME', data.name)
-          commit('SET_AVATAR', data.avatar)
-          commit('SET_INTRODUCTION', data.introduction)
-          resolve(response)
+          resolve(response.data)
         }).catch(error => {
           reject(error)
         })

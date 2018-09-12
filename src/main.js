@@ -21,10 +21,14 @@ import './mock' // simulation data
 
 import * as filters from './filters' // global filters
 
+import { installAll } from '@/utils/plugins'
+
 Vue.use(Element, {
   size: Cookies.get('size') || 'medium', // set element-ui default size
   i18n: (key, value) => i18n.t(key, value)
 })
+
+installAll(Vue)
 
 // register global utility filters.
 Object.keys(filters).forEach(key => {
@@ -38,5 +42,8 @@ new Vue({
   router,
   store,
   i18n,
+  created() {
+    console.log(this.$http ? 'axios workd!' : 'axios uninstall~')
+  },
   render: h => h(App)
 })

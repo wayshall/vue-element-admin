@@ -6,7 +6,7 @@ export function loginByUsername(username, password) {
     password
   }
   return request({
-    url: '/login/login',
+    url: '/dologin',
     method: 'post',
     data
   })
@@ -20,10 +20,11 @@ export function logout() {
 }
 
 export function getUserInfo(token) {
-  return request({
-    url: '/user/info',
-    method: 'get',
-    params: { token }
-  })
+  return request.get('/web-admin/userProfile.json')
+  // return request({
+  //   url: '/user/info',
+  //   method: 'get',
+  //   params: { token }
+  // })
 }
 
