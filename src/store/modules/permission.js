@@ -1,4 +1,6 @@
 import { asyncRouterMap, constantRouterMap } from '@/router'
+import { getRouters } from '@/api/login'
+import Layout from '@/views/layout/Layout'
 
 /**
  * 通过meta.role判断是否与当前用户权限匹配
@@ -31,6 +33,24 @@ function filterAsyncRouter(asyncRouterMap, roles) {
   return accessedRouters
 }
 
+function filterAndEnhanceRouters(routers) {
+  routers.forEach(router => {
+    const viewPath = router.componentViewPath
+    if (!viewPath) {
+      // ignore
+    } else if (viewPath === 'Layout') {
+      router.component = Layout
+    } else {
+      router.component = () => import(viewPath)
+    }
+
+    if (router.children && router.children.length > 0) {
+      filterAndEnhanceRouters(router.children)
+    }
+  })
+  return routers
+}
+
 const permission = {
   state: {
     routers: constantRouterMap,
@@ -52,8 +72,16 @@ const permission = {
         // } else {
         //   accessedRouters = filterAsyncRouter(asyncRouterMap, roles)
         // }
-        commit('SET_ROUTERS', [])
-        resolve()
+        getRouters().then(res => {
+          let asyncRouters = res.data.data
+          console.log(asyncRouters)
+          asyncRouters = filterAndEnhanceRouters(asyncRouters)
+          console.log(asyncRouters)
+          commit('SET_ROUTERS', asyncRouters)
+          resolve(asyncRouters)
+        }).catch(err => {
+          resolve(err)
+        })
       })
     }
   }

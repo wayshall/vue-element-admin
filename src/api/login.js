@@ -19,7 +19,7 @@ export function logout() {
   })
 }
 
-export function getUserInfo(token) {
+export function getUserInfo() {
   return request.get('/web-admin/userProfile.json')
   // return request({
   //   url: '/user/info',
@@ -28,3 +28,6 @@ export function getUserInfo(token) {
   // })
 }
 
+export function getRouters() {
+  return request.get('/web-admin/vueRouters.json')
+}

@@ -1,5 +1,5 @@
 import { loginByUsername, logout, getUserInfo } from '@/api/login'
-import { setToken, removeToken } from '@/utils/auth'
+import { setLogin, removeLogin } from '@/utils/auth'
 
 const user = {
   state: {
@@ -12,8 +12,7 @@ const user = {
     roles: [],
     setting: {
       articlePlatform: []
-    },
-    login: false
+    }
   },
 
   mutations: {
@@ -38,9 +37,6 @@ const user = {
     SET_ROLES: (state, roles) => {
       state.roles = roles
     },
-    SET_LOGIN: (state, loginState) => {
-      state.login = loginState
-    },
     SET_USER: (state, name) => {
       state.userName = name
     }
@@ -55,7 +51,8 @@ const user = {
           // const data = response.data
           // commit('SET_TOKEN', data.token)
           // setToken(response.data.token)
-          commit('SET_LOGIN', true)
+          // commit('SET_LOGIN', true)
+          setLogin(true)
           resolve()
         }).catch(error => {
           reject(error)
@@ -66,20 +63,17 @@ const user = {
     // 获取用户信息
     GetUserInfo({ commit, state }) {
       return new Promise((resolve, reject) => {
-        getUserInfo(state.token).then(response => {
-          console.log('1.......')
+        getUserInfo().then(response => {
           if (!response.data) { // 由于mockjs 不支持自定义状态码只能这样hack
             reject('error')
           }
-          console.log('2......')
           const data = response.data
-          console.log('data')
-          console.log(data)
           if (data.success) {
             commit('SET_NAME', data.data.nickName)
             commit('SET_AVATAR', data.data.avatar || '')
             commit('SET_USER', data.data.userName)
-            commit('SET_LOGIN', true)
+            // commit('SET_LOGIN', true)
+            setLogin(true)
           }
           resolve(response.data)
         }).catch(error => {
@@ -108,7 +102,8 @@ const user = {
         logout(state.token).then(() => {
           commit('SET_TOKEN', '')
           commit('SET_ROLES', [])
-          removeToken()
+          // removeToken()
+          removeLogin()
           resolve()
         }).catch(error => {
           reject(error)
@@ -119,8 +114,9 @@ const user = {
     // 前端 登出
     FedLogOut({ commit }) {
       return new Promise(resolve => {
-        commit('SET_TOKEN', '')
-        removeToken()
+        // commit('SET_TOKEN', '')
+        // removeToken()
+        removeLogin()
         resolve()
       })
     },
@@ -128,8 +124,8 @@ const user = {
     // 动态修改权限
     ChangeRoles({ commit }, role) {
       return new Promise(resolve => {
-        commit('SET_TOKEN', role)
-        setToken(role)
+        // commit('SET_TOKEN', role)
+        // setToken(role)
         getUserInfo(role).then(response => {
           const data = response.data
           commit('SET_ROLES', data.roles)

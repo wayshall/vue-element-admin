@@ -38,8 +38,9 @@ service.interceptors.response.use(
      */
     console.log('log response data:')
     console.log(response)
-    const res = response.data.data || {}
+    const res = response.data || {}
     if (res.error) {
+      console.log(`error code : ${res.code}`)
       Message({
         message: res.message,
         type: 'error',
