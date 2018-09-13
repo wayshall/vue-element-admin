@@ -16,32 +16,48 @@
           <size-select class="international right-menu-item"/>
         </el-tooltip>
 
-        <lang-select class="international right-menu-item"/>
+        <!-- <lang-select class="international right-menu-item"/> -->
 
-        <el-tooltip :content="$t('navbar.theme')" effect="dark" placement="bottom">
+        <!-- <el-tooltip :content="$t('navbar.theme')" effect="dark" placement="bottom">
           <theme-picker class="theme-switch right-menu-item"/>
-        </el-tooltip>
+        </el-tooltip> -->
       </template>
 
       <el-dropdown class="avatar-container right-menu-item" trigger="click">
         <div class="avatar-wrapper">
-          <img :src="avatar+'?imageView2/1/w/80/h/80'" class="user-avatar">
+          <img :src="avatar" class="user-avatar">
           <i class="el-icon-caret-bottom"/>
         </div>
         <el-dropdown-menu slot="dropdown">
           <router-link to="/">
-            <el-dropdown-item>
-              {{ $t('navbar.dashboard') }}
-            </el-dropdown-item>
+            <el-dropdown-item> {{ $t('navbar.dashboard') }} </el-dropdown-item>
           </router-link>
-          <a target="_blank" href="https://github.com/PanJiaChen/vue-element-admin/">
-            <el-dropdown-item>
-              {{ $t('navbar.github') }}
-            </el-dropdown-item>
-          </a>
           <el-dropdown-item divided>
             <span style="display:block;" @click="logout">{{ $t('navbar.logOut') }}</span>
           </el-dropdown-item>
+        </el-dropdown-menu>
+      </el-dropdown>
+
+      <el-dropdown class="right-menu-item">
+        <span class="el-dropdown-link">
+          <a href="javascript:void(0);">学习文档</a><i class="el-icon-arrow-down el-icon--right"/>
+        </span>
+        <el-dropdown-menu slot="dropdown">
+          <a target="_blank" href="https://cn.vuejs.org/v2/api/">
+            <el-dropdown-item>
+              vuejs 文档
+            </el-dropdown-item>
+          </a>
+          <a target="_blank" href="https://element.eleme.io/#/zh-CN/component/installation">
+            <el-dropdown-item>
+              Element UI 文档
+            </el-dropdown-item>
+          </a>
+          <a target="_blank" href="https://panjiachen.gitee.io/vue-element-admin-site/zh/guide/#%E5%8A%9F%E8%83%BD">
+            <el-dropdown-item>
+              vue-element-admin文档
+            </el-dropdown-item>
+          </a>
         </el-dropdown-menu>
       </el-dropdown>
     </div>

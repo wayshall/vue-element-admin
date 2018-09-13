@@ -36,16 +36,19 @@
         </span>
       </el-form-item>
 
-      <el-button :loading="loading" type="primary" style="width:100%;margin-bottom:30px;" @click.native.prevent="handleLogin">{{ $t('login.logIn') }}</el-button>
+      <el-form-item prop="verifyCode">
+        <el-input
+          v-model="loginForm.verifyCode"
+          placeholder="验证码"
+          name="verifyCode"
+          type="text"
+          auto-complete="on"
+        />
+      </el-form-item>
 
-      <div class="tips">
-        <span>{{ $t('login.username') }} : admin</span>
-        <span>{{ $t('login.password') }} : {{ $t('login.any') }}</span>
-      </div>
-      <div class="tips">
-        <span style="margin-right:18px;">{{ $t('login.username') }} : editor</span>
-        <span>{{ $t('login.password') }} : {{ $t('login.any') }}</span>
-      </div>
+      <img id="verifyCodeImage" :src="verifyCodeData" width="100" height="30" @click="refreshVerifyCode">
+
+      <el-button :loading="loading" type="primary" style="width:100%;margin-bottom:30px;" @click.native.prevent="handleLogin">{{ $t('login.logIn') }}</el-button>
 
     </el-form>
 
@@ -55,6 +58,7 @@
 <script>
 import { isvalidUsername } from '@/utils/validate'
 import SocialSign from './socialsignin'
+import { setVerifyCodeSign } from '@/utils/auth'
 
 export default {
   name: 'Login',
@@ -77,7 +81,8 @@ export default {
     return {
       loginForm: {
         username: '',
-        password: ''
+        password: '',
+        verifyCode: ''
       },
       loginRules: {
         username: [{ required: true, trigger: 'blur', validator: validateUsername }],
@@ -86,7 +91,8 @@ export default {
       passwordType: 'password',
       loading: false,
       showDialog: false,
-      redirect: undefined
+      redirect: undefined,
+      verifyCodeData: ''
     }
   },
   watch: {
@@ -96,16 +102,28 @@ export default {
       },
       immediate: true
     }
-
   },
   created() {
     // window.addEventListener('hashchange', this.afterQRScan)
     this.$store.dispatch('setLanguage', 'zh')
   },
+  mounted() {
+    this.refreshVerifyCode()
+  },
   destroyed() {
     // window.removeEventListener('hashchange', this.afterQRScan)
   },
   methods: {
+    refreshVerifyCode() {
+      this.$http.get('/web-admin/captcha.json').then(res => {
+        console.log('image data')
+        const data = res.data.data
+        const base64Data = data.data
+        console.log(base64Data)
+        this.$data.verifyCodeData = 'data:image/png;base64,' + base64Data
+        setVerifyCodeSign(data.sign)
+      })
+    },
     showPwd() {
       if (this.passwordType === 'password') {
         this.passwordType = ''
