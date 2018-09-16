@@ -4,7 +4,7 @@
     <el-form ref="loginForm" :model="loginForm" :rules="loginRules" class="login-form" auto-complete="on" label-position="left">
 
       <div class="title-container">
-        <h3 class="title">{{ $t('login.title') }}</h3>
+        <h3 class="title">系统登陆</h3>
       </div>
 
       <el-form-item prop="username">
@@ -13,7 +13,7 @@
         </span>
         <el-input
           v-model="loginForm.username"
-          :placeholder="$t('login.username')"
+          placeholder="请输入用户名"
           name="username"
           type="text"
           auto-complete="on"

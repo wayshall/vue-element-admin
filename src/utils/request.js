@@ -2,12 +2,14 @@ import axios from 'axios'
 import { Message, MessageBox } from 'element-ui'
 import store from '../store'
 import qs from 'qs'
+import { getToken } from '@/utils/auth'
 
 // 创建axios实例
 const service = axios.create({
   headers: {
     'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8',
-    'x-response-view': 'default'
+    'x-response-view': 'default',
+    'x-session-strategy': 'HEADER'
   },
   baseURL: process.env.BASE_API, // api的base_url
   timeout: 120000 // 请求超时时间
@@ -20,6 +22,10 @@ service.interceptors.request.use(
     const contentType = config.headers['Content-Type']
     if (config.data && contentType && contentType.indexOf('application/x-www-form-urlencoded') !== -1) {
       config.data = qs.stringify(config.data)
+    }
+    const token = getToken()
+    if (token) {
+      config.headers['x-auth-token'] = token
     }
     return config
   },

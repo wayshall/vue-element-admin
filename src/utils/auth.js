@@ -1,19 +1,24 @@
 import Cookies from 'js-cookie'
 
-const TokenKey = 'SESSION'
+const TokenKey = '_tn_'
 const LoginKey = 'isLogin'
 const cookieOptions = {
   path: '/'
 }
+
+export const TokenHeaderName = 'x-auth-token'
+
 export function getToken() {
   return Cookies.get(TokenKey)
 }
 
 export function setToken(token) {
+  setLogin(true)
   return Cookies.set(TokenKey, token, cookieOptions)
 }
 
 export function removeToken() {
+  removeLogin()
   return Cookies.remove(TokenKey, cookieOptions)
 }
 

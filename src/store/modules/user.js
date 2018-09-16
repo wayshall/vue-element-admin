@@ -1,11 +1,10 @@
 import { loginByUsername, logout, getUserInfo } from '@/api/login'
-import { setLogin, removeLogin } from '@/utils/auth'
+import * as auth from '@/utils/auth'
 
 const user = {
   state: {
     userName: '',
     status: '',
-    code: '',
     // token: getToken(),
     name: '',
     avatar: '',
@@ -16,9 +15,6 @@ const user = {
   },
 
   mutations: {
-    SET_CODE: (state, code) => {
-      state.code = code
-    },
     SET_TOKEN: (state, token) => {
       state.token = token
     },
@@ -52,7 +48,12 @@ const user = {
           // commit('SET_TOKEN', data.token)
           // setToken(response.data.token)
           // commit('SET_LOGIN', true)
-          setLogin(true)
+          const token = response.headers[auth.TokenHeaderName]
+          if (!token) {
+            reject('no token found!')
+          } else {
+            auth.setToken(token)
+          }
           resolve()
         }).catch(error => {
           reject(error)
@@ -73,7 +74,7 @@ const user = {
             commit('SET_AVATAR', data.data.avatar || '')
             commit('SET_USER', data.data.userName)
             // commit('SET_LOGIN', true)
-            setLogin(true)
+            auth.setLogin(true)
           }
           resolve(response.data)
         }).catch(error => {
@@ -102,8 +103,7 @@ const user = {
         logout(state.token).then(() => {
           commit('SET_TOKEN', '')
           commit('SET_ROLES', [])
-          // removeToken()
-          removeLogin()
+          auth.removeToken()
           resolve()
         }).catch(error => {
           reject(error)
@@ -115,8 +115,7 @@ const user = {
     FedLogOut({ commit }) {
       return new Promise(resolve => {
         // commit('SET_TOKEN', '')
-        // removeToken()
-        removeLogin()
+        auth.removeToken()
         resolve()
       })
     },
